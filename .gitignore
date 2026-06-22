@@ -1,0 +1,12 @@
+# Betriebssystem-Dateien
+.DS_Store
+Thumbs.db
+__MACOSX/
+
+# Temporaere Dateien
+*.tmp
+*~
+
+# Claude Code / Tool-Dateien (nicht ins Repo)
+.claude/
+CLAUDE.md
