@@ -2,7 +2,7 @@
 
 > **Zielgruppe:** Alle, für die die Arbeit mit Datenbanken **neu** ist.
 > Das Szenario liefert eine genaue Beschreibung der Kundenanforderungen, einen
-> Überblick über die notwendigen Handlungsschritte und deren Reihenfolge.
+> Überblick über die notwendigen Handlungsschritte und deren Reihenfolge..
 
 ## Überblick
 
