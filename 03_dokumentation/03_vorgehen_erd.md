@@ -1,30 +1,4 @@
-Ableitung der zusätzlichen Entitäten aus der Aufgabenstellung
-
-Aus der Aufgabenstellung werden die fachlichen Objekte abgeleitet, die zusätzlich gespeichert werden müssen.
-
-| Anforderung aus der Aufgabenstellung                    | Abgeleitete Entität        |
-| ------------------------------------------------------- | ------------------------- |
-| Speicherung von Rezepten mit mehreren Zutaten           | REZEPT                    |
-| Speicherung von Ernährungskategorien                    | ERNAEHRUNGSKATEGORIE      |
-| Speicherung von Beschränkungen / Allergenen             | BESCHRAENKUNG             |
-
-| Neue Entität           | Begründung                                                                 |
-| ---------------------- | -------------------------------------------------------------------------- |
-| REZEPT                 | Wird benötigt, weil Rezepte gespeichert werden sollen.                     |
-| ERNAEHRUNGSKATEGORIE   | Wird benötigt, weil Rezepte nach Kategorien gefiltert werden sollen.       |
-| BESCHRAENKUNG          | Wird benötigt, weil Allergene und Unverträglichkeiten gespeichert werden.  |
-
-Die Entität ZUTAT ist bereits vorhanden und wird weiterverwendet.
-
-Ergebnis der ERD-Erweiterung
-
-Das ERD wird um folgende Entitäten erweitert:
-
-* REZEPT
-* ERNAEHRUNGSKATEGORIE
-* BESCHRAENKUNG
-
-Ergebnis als Liste Beziehungen
+ergebnis als Liste Beziehungen
 
 KUNDE → BESTELLUNG = 1:n
 LIEFERANT → ZUTAT = 1:n
@@ -35,4 +9,34 @@ ZUTAT ↔ BESCHRAENKUNG = n:m
 
 
 
+| Kundenanforderung | Umsetzung im Soll-ERD |
+|---|---|
+| Speicherung von Rezepten | neue Entität `REZEPT` |
+| Rezept besteht aus mehreren Zutaten | neue Zwischentabelle `REZEPT_ZUTAT` |
+| Speicherung von Ernährungskategorien | neue Entität `ERNAEHRUNGSKATEGORIE` |
+| Rezept kann mehrere Ernährungskategorien haben | neue Zwischentabelle `REZEPT_ERNAEHRUNGSKATEGORIE` |
+| Speicherung von Beschränkungen / Allergenen | neue Entität `BESCHRAENKUNG` |
+| Zutat kann Allergene/Beschränkungen enthalten | neue Zwischentabelle `ZUTAT_BESCHRAENKUNG` |
+| Zusammenstellung von Zutaten nach Rezept | spätere SQL-Abfrage über `REZEPT_ZUTAT` |
+| Auswahl von Rezepten nach Ernährungskategorie | spätere SQL-Abfrage über `REZEPT_ERNAEHRUNGSKATEGORIE` |
+| Ausschluss von Rezepten wegen Allergenen | spätere SQL-Abfrage über `REZEPT_ZUTAT` und `ZUTAT_BESCHRAENKUNG` |
+| DSGVO-Auskunft / Löschung | Konzept mit SQL-Abfragen und Anonymisierung |
+| Zugriffskontrolle personenbezogener Daten | optional Tabellen wie `BENUTZER`, `ROLLE`, `BENUTZER_ROLLE` |
+
+Neue Entitäten:
+REZEPT
+ERNAEHRUNGSKATEGORIE
+BESCHRAENKUNG
+
+Neue Zwischentabellen:
+REZEPT_ZUTAT
+REZEPT_ERNAEHRUNGSKATEGORIE
+ZUTAT_BESCHRAENKUNG
+
+Spätere SQL-Abfragen:
+Zutaten eines Rezepts anzeigen
+Rezepte nach Kategorie auswählen
+Rezepte mit bestimmten Allergenen ausschließen
+DSGVO-Auskunft erzeugen
+Kundendaten löschen oder anonymisieren
 
