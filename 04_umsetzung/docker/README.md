@@ -48,7 +48,7 @@ docker compose logs db
 | Einstellung | Wert |
 |-------------|------|
 | Host | `localhost` |
-| Port | `5432` |
+| Port | `6000` |
 | Datenbank | `krautundrueben` |
 | Benutzer | `krautadmin` |
 | Passwort | `krautpass` |

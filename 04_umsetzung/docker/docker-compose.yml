@@ -24,7 +24,7 @@ services:
     ports:
       # Host-Port 5432 -> Container-Port 5432
       # Falls 5432 lokal belegt ist, links z.B. auf "5433:5432" aendern.
-      - "5432:5432"
+      - "6000:5432"
     volumes:
       # Init-Skripte: werden beim ersten Start automatisch ausgefuehrt
       - ./init:/docker-entrypoint-initdb.d:ro
