@@ -1,0 +1,58 @@
+# ============================================================
+# docker-compose.yml  –  MySQL-Datenbank "krautundrueben"
+# ============================================================
+# Startet eine MySQL-Datenbank in einem Docker-Container.
+# Beim ALLERERSTEN Start werden automatisch ausgefuehrt:
+#   1) 01_schema.sql      -> legt Datenbank + Tabellen an
+#   2) 02_load_daten.sql  -> laedt die Testdaten
+#
+# Besonderheit gegenueber dem Postgres-Setup (../docker/):
+#   Die Vorgabe-Dateien in 01_quellen_und_vorgaben/ sind bereits in
+#   MySQL-Syntax (CREATE DATABASE IF NOT EXISTS, USE ..., AUTO_INCREMENT).
+#   Sie laufen auf MySQL also DIREKT, ohne Portierung. Sie werden hier nur
+#   read-only eingehaengt und NICHT veraendert.
+#
+# Starten:   docker compose up -d
+# Stoppen:   docker compose down
+# Komplett zuruecksetzen (Daten loeschen, Init laeuft neu):
+#            docker compose down -v   &&   docker compose up -d
+# ============================================================
+
+name: krautundrueben-mysql
+
+services:
+  db:
+    image: mysql:8
+    container_name: krautundrueben-mysql
+    restart: unless-stopped
+    environment:
+      # Legt die Datenbank an und gibt dem Benutzer krautadmin Rechte darauf.
+      MYSQL_DATABASE: krautundrueben
+      MYSQL_USER: krautadmin
+      MYSQL_PASSWORD: krautpass
+      # Bei MySQL ist ein root-Passwort Pflicht.
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      # Host-Port 6001 -> Container-Port 3306
+      # 6001, damit es weder mit einem lokal belegten 3306 noch mit dem
+      # Postgres-Port 6000 (../docker/) kollidiert.
+      # Falls 6001 belegt ist, links z.B. auf "6002:3306" aendern.
+      - "6001:3306"
+    volumes:
+      # Init-Skripte: Der MySQL-Container fuehrt alle Dateien in
+      # /docker-entrypoint-initdb.d beim ERSTEN Start in alphabetischer
+      # Reihenfolge aus. Wir haengen die beiden Original-Vorgaben einzeln
+      # (read-only) mit Zahlen-Praefix ein, damit zuerst das Schema und
+      # dann die Daten laufen. Die Vorgaben selbst bleiben unveraendert.
+      - ../../01_quellen_und_vorgaben/sql_dump_database_create_neu.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ../../01_quellen_und_vorgaben/krautundruebenload.sql:/docker-entrypoint-initdb.d/02_load_daten.sql:ro
+      # Dauerhafte Speicherung der Datenbankdaten
+      - krautundrueben_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "krautadmin", "-pkrautpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  krautundrueben_mysql_data:
