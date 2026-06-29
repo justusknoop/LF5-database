@@ -1,0 +1,43 @@
+# ============================================================
+# docker-compose.yml  –  PostgreSQL-Datenbank "krautundrueben"
+# ============================================================
+# Startet eine PostgreSQL-Datenbank in einem Docker-Container.
+# Beim ALLERERSTEN Start werden automatisch ausgefuehrt:
+#   1) init/01_schema.sql      -> legt die Tabellen an
+#   2) init/02_load_daten.sh   -> laedt die Testdaten aus der Vorgabe
+#
+# Starten:   docker compose up -d
+# Stoppen:   docker compose down
+# Komplett zuruecksetzen (Daten loeschen, Init laeuft neu):
+#            docker compose down -v   &&   docker compose up -d
+# ============================================================
+
+services:
+  db:
+    image: postgres:16
+    container_name: krautundrueben-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: krautundrueben
+      POSTGRES_USER: krautadmin
+      POSTGRES_PASSWORD: krautpass
+    ports:
+      # Host-Port 5432 -> Container-Port 5432
+      # Falls 5432 lokal belegt ist, links z.B. auf "5433:5432" aendern.
+      - "5432:5432"
+    volumes:
+      # Init-Skripte: werden beim ersten Start automatisch ausgefuehrt
+      - ./init:/docker-entrypoint-initdb.d:ro
+      # Vorgabe-Dateien (read-only), damit das Lade-Skript sie lesen kann.
+      # Die Vorgaben werden NICHT veraendert.
+      - ../../01_quellen_und_vorgaben:/vorgaben:ro
+      # Dauerhafte Speicherung der Datenbankdaten
+      - krautundrueben_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U krautadmin -d krautundrueben"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  krautundrueben_data:
