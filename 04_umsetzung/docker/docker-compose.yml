@@ -12,6 +12,8 @@
 #            docker compose down -v   &&   docker compose up -d
 # ============================================================
 
+name: krautundrueben
+
 services:
   db:
     image: postgres:16
